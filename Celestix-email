@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="sr" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Celestix | Postavi Pitanje Zvezdama</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css?family=Cinzel:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <style>
+        :root {
+            --bg-dark: #000000;
+            --bg-glass: rgba(20, 20, 20, 0.75);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --text-primary: #FFFFFF;
+            --text-secondary: #CCCCCC;
+            --primary-accent: #B238FF;
+            --secondary-accent: #E500C3;
+            --font-naslov: 'Cinzel', serif;
+            --font-telo: 'Inter', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-telo);
+            background: radial-gradient(ellipse at top center, #1a1a1a 0%, #000000 70%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .glass-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .btn-gradient {
+            background-image: linear-gradient(45deg, var(--primary-accent) 40%, var(--secondary-accent) 60%);
+            color: #101010;
+            font-weight: 700;
+            font-family: var(--font-telo);
+            border: none;
+            transition: all 0.4s ease;
+            box-shadow: 0 4px 25px 0 rgba(178, 56, 255, 0.2);
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 35px 0 rgba(229, 0, 195, 0.3);
+        }
+
+        .text-gradient {
+            background: -webkit-linear-gradient(45deg, var(--primary-accent) 40%, var(--secondary-accent) 60%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h1, h2, h3 {
+            font-family: var(--font-naslov);
+        }
+
+        /* Input Styles */
+        input, textarea, select {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-accent);
+            box-shadow: 0 0 15px rgba(178, 56, 255, 0.2);
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Placeholder styling */
+        ::placeholder {
+            color: #666;
+            font-style: italic;
+            font-size: 0.9em;
+        }
+        
+        /* Date/Time picker icon color fix for dark mode */
+        ::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
+
+        /* Custom Checkbox */
+        .custom-checkbox input:checked + div {
+            background-color: var(--primary-accent);
+            border-color: var(--primary-accent);
+        }
+        .custom-checkbox input:checked + div::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 1px;
+            width: 6px;
+            height: 12px;
+            border: solid black;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        /* Tabs */
+        .tab-active {
+            background-color: rgba(178, 56, 255, 0.2);
+            border-color: var(--primary-accent);
+            color: white;
+        }
+        .tab-inactive {
+            background-color: transparent;
+            border-color: transparent;
+            color: #888;
+        }
+        .tab-inactive:hover {
+            color: #ccc;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+
+<body class="justify-between">
+
+    <!-- Header (Minimal) -->
+    <header class="w-full py-6 z-50">
+        <div class="container mx-auto px-6 text-center">
+            <a href="#" class="text-3xl tracking-wider text-gradient font-black"
+                style="font-family: var(--font-naslov);">CELESTIX</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center px-4 py-8 relative z-10" 
+          x-data="{ 
+              analysisType: 'single', 
+              unknownTime1: false, 
+              unknownTime2: false,
+              submitted: false,
+              placeholders: {
+                  single: `Budite detaljni. Npr: 'Radim u marketingu 5 godina, ali osećam potpunu prazninu i stres. Razmišljam o potpunoj promeni profesije u sferu psihologije. Da li moj natal to podržava? Takođe, imam osećaj da stalno privlačim partnere koji nisu emotivno dostupni. Zašto mi se to dešava?'`,
+                  synastry: `Budite detaljni. Npr: 'U vezi smo 2 godine, ali komunikacija je postala jako teška. Ja (Rak) želim više bliskosti i sigurnosti, dok on (Vodolija) traži previše slobode i distancira se kad nastane problem. Da li su naše potrebe pomirljive dugoročno ili je ovo karmička lekcija?'`
+              }
+          }">
+        
+        <!-- Background Effects -->
+        <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-purple-600/20 rounded-full blur-[100px] -z-10"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-64 h-64 bg-pink-600/20 rounded-full blur-[100px] -z-10"></div>
+
+        <div class="w-full max-w-2xl">
+            
+            <!-- Hero Text -->
+            <div class="text-center mb-8">
+                <h1 class="text-3xl md:text-5xl font-bold mb-4 leading-tight">
+                    Jedno Pitanje. <br>
+                    <span class="text-gradient">Jedan Kosmički Odgovor.</span>
+                </h1>
+                <p class="text-text-secondary text-base md:text-lg max-w-lg mx-auto">
+                    Unesite podatke i budite što detaljniji u opisu svog problema. Dobićete personalizovani uvid na email.
+                </p>
+            </div>
+
+            <!-- Lead Form -->
+            <div class="glass-card p-6 md:p-10">
+                
+                <!-- Success State -->
+                <div x-show="submitted" x-transition style="display: none;" class="text-center py-10">
+                    <i class="fas fa-check-circle text-5xl text-green-500 mb-4"></i>
+                    <h3 class="text-2xl text-white mb-2">Zahtev Uspešno Poslat!</h3>
+                    <p class="text-text-secondary">Zvezde se poravnavaju. Odgovor stiže na vaš email uskoro.</p>
+                </div>
+
+                <!-- Form Container -->
+                <div x-show="!submitted" x-transition>
+                    
+                    <!-- Tabs for Type Selection -->
+                    <div class="flex p-1 bg-black/40 rounded-xl mb-8 border border-white/10">
+                        <button 
+                            @click="analysisType = 'single'"
+                            :class="analysisType === 'single' ? 'tab-active' : 'tab-inactive'"
+                            class="flex-1 py-3 px-4 rounded-lg font-medium transition-all duration-300 border">
+                            <i class="fas fa-user mr-2"></i> Lična Analiza
+                        </button>
+                        <button 
+                            @click="analysisType = 'synastry'"
+                            :class="analysisType === 'synastry' ? 'tab-active' : 'tab-inactive'"
+                            class="flex-1 py-3 px-4 rounded-lg font-medium transition-all duration-300 border">
+                            <i class="fas fa-user-group mr-2"></i> Uporedna (Sinastrija)
+                        </button>
+                    </div>
+
+                    <form action="https://formspree.io/f/xwpgnqwo" method="POST">
+                        
+                        <!-- Hidden Field for Analysis Type -->
+                        <input type="hidden" name="Tip_Analize" :value="analysisType === 'single' ? 'Lična Analiza' : 'Sinastrija'">
+
+                        <!-- PERSON 1 DATA (Always Visible) -->
+                        <div class="mb-8">
+                            <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                                <span class="bg-purple-600/20 text-purple-400 w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm border border-purple-500/30">1</span>
+                                <span x-text="analysisType === 'synastry' ? 'Tvoji Podaci' : 'Lični Podaci'"></span>
+                            </h3>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-400 mb-2">Ime</label>
+                                    <input type="text" name="Osoba1_Ime" required placeholder="Vaše Ime"
+                                        class="w-full px-4 py-3 rounded-xl focus:ring-1 focus:ring-purple-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-400 mb-2">Mesto Rođenja</label>
+                                    <input type="text" name="Osoba1_Mesto" required placeholder="Grad, Država"
+                                        class="w-full px-4 py-3 rounded-xl focus:ring-1 focus:ring-purple-500">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-400 mb-2">Datum Rođenja</label>
+                                    <input type="date" name="Osoba1_Datum" required
+                                        class="w-full px-4 py-3 rounded-xl focus:ring-1 focus:ring-purple-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-400 mb-2">Vreme Rođenja</label>
+                                    <div class="relative">
+                                        <input type="time" name="Osoba1_Vreme" 
+                                            :disabled="unknownTime1"
+                                            :required="!unknownTime1"
+                                            class="w-full px-4 py-3 rounded-xl focus:ring-1 focus:ring-purple-500 disabled:opacity-50">
+                                    </div>
+                                    <!-- Checkbox for Unknown Time -->
+                                    <label class="flex items-center mt-2 cursor-pointer custom-checkbox">
+                                        <input type="checkbox" name="Osoba1_Vreme_Nepoznato" x-model="unknownTime1" class="hidden">
+                                        <div class="w-5 h-5 border border-gray-500 rounded relative mr-2 transition-colors"></div>
+                                        <span class="text-xs text-gray-400">Ne znam tačno vreme</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PERSON 2 DATA (Visible only for Synastry) -->
+                        <div x-show="analysisType === 'synastry'" x-transition class="mb-8 pt-6 border-t border-white/10">
+                            <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                                <span class="bg-pink-600/20 text-pink-400 w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm border border-pink-500/30">2</span>
+                                Podaci Partnera
+                            </h3>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-400 mb-2">Ime Partnera</label>
+                                    <input type="text" name="Osoba2_Ime" placeholder="Ime Partnera"
+                                        :required="analysisType === 'synastry'"
+                                        class="w-full px-4 py-3 rounded-xl focus:ring-1 focus:ring-purple-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-400 mb-2">Mesto Rođenja</label>
+                                    <input type="text" name="Osoba2_Mesto" placeholder="Grad, Država"
+                                        :required="analysisType === 'synastry'"
+                                        class="w-full px-4 py-3 rounded-xl focus:ring-1 focus:ring-purple-500">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-400 mb-2">Datum Rođenja</label>
+                                    <input type="date" name="Osoba2_Datum" 
+                                        :required="analysisType === 'synastry'"
+                                        class="w-full px-4 py-3 rounded-xl focus:ring-1 focus:ring-purple-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-400 mb-2">Vreme Rođenja</label>
+                                    <div class="relative">
+                                        <input type="time" name="Osoba2_Vreme" 
+                                            :disabled="unknownTime2"
+                                            :required="analysisType === 'synastry' && !unknownTime2"
+                                            class="w-full px-4 py-3 rounded-xl focus:ring-1 focus:ring-purple-500 disabled:opacity-50">
+                                    </div>
+                                    <!-- Checkbox for Unknown Time -->
+                                    <label class="flex items-center mt-2 cursor-pointer custom-checkbox">
+                                        <input type="checkbox" name="Osoba2_Vreme_Nepoznato" x-model="unknownTime2" class="hidden">
+                                        <div class="w-5 h-5 border border-gray-500 rounded relative mr-2 transition-colors"></div>
+                                        <span class="text-xs text-gray-400">Ne znam tačno vreme</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- COMMON FIELDS (Email & Question) -->
+                        <div class="pt-6 border-t border-white/10">
+                            <div class="mb-6">
+                                <label for="email" class="block text-sm font-medium text-gray-400 mb-2">Vaša Email Adresa</label>
+                                <input type="email" name="Email_Korisnika" id="email" required placeholder="Gde šaljemo odgovor?"
+                                    class="w-full px-4 py-3 rounded-xl focus:ring-1 focus:ring-purple-500">
+                            </div>
+
+                            <div class="mb-8">
+                                <label for="question" class="block text-sm font-medium text-primary-accent mb-2 font-bold flex justify-between">
+                                    <span><i class="fas fa-star mr-1"></i> Vaše Pitanje / Situacija</span>
+                                    <span class="text-xs font-normal text-gray-500 pt-1" x-text="analysisType === 'single' ? 'Budite detaljni o sebi' : 'Budite detaljni o odnosu'"></span>
+                                </label>
+                                
+                                <!-- DYNAMIC TEXTAREA PLACEHOLDER -->
+                                <textarea name="Pitanje" id="question" rows="6" required 
+                                    :placeholder="analysisType === 'single' ? placeholders.single : placeholders.synastry"
+                                    class="w-full px-4 py-3 rounded-xl focus:ring-1 focus:ring-purple-500 resize-none text-sm leading-relaxed"></textarea>
+                                
+                                <p class="text-xs text-gray-500 mt-2 text-right">Što više detalja napišete, analiza će biti preciznija.</p>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" class="w-full py-4 btn-gradient rounded-full text-lg shadow-lg group relative overflow-hidden">
+                                <span class="relative z-10 flex items-center justify-center">
+                                    Pošalji Pitanje <i class="fas fa-paper-plane ml-2 group-hover:translate-x-1 transition-transform"></i>
+                                </span>
+                            </button>
+                            
+                            <p class="text-xs text-center text-gray-600 mt-4">
+                                <i class="fas fa-lock mr-1"></i> Vaši podaci se koriste isključivo za izradu analize.
+                            </p>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-6 border-t border-white/5 mt-auto z-10 bg-black/50 backdrop-blur-sm">
+        <div class="container mx-auto px-6 text-center text-xs text-gray-500">
+            <p>&copy; 2025 Celestix. Sva prava zadržana.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

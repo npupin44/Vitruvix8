@@ -1,356 +1,534 @@
 <!DOCTYPE html>
-<html lang="sr" class="scroll-smooth">
-
+<html lang="sr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Celestix | Postavi Pitanje Zvezdama</title>
+    <title>VITRUVIX | Postani 1%</title>
+    <meta name="description" content="Biohacking protokoli za dominaciju, fokus i testosteron.">
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css?family=Cinzel:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel (za JSX) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
     <style>
-        :root {
-            --bg-dark: #000000;
-            --bg-glass: rgba(20, 20, 20, 0.75);
-            --border-color: rgba(255, 255, 255, 0.1);
-            --text-primary: #FFFFFF;
-            --text-secondary: #CCCCCC;
-            --primary-accent: #B238FF;
-            --secondary-accent: #E500C3;
-            --font-naslov: 'Cinzel', serif;
-            --font-telo: 'Inter', sans-serif;
-        }
-
         body {
-            font-family: var(--font-telo);
-            background: radial-gradient(ellipse at top center, #1a1a1a 0%, #000000 70%);
-            min-height: 100vh;
-            color: var(--text-primary);
-            overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
+            background-color: #000;
+            font-family: 'Inter', sans-serif;
         }
-
-        .glass-card {
-            background: var(--bg-glass);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
         }
-
-        .btn-gradient {
-            background-image: linear-gradient(45deg, var(--primary-accent) 40%, var(--secondary-accent) 60%);
-            color: #101010;
-            font-weight: 700;
-            font-family: var(--font-telo);
-            border: none;
-            transition: all 0.4s ease;
-            box-shadow: 0 4px 25px 0 rgba(178, 56, 255, 0.2);
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
         }
-
-        .btn-gradient:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 10px 35px 0 rgba(229, 0, 195, 0.3);
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #171717; 
         }
-
-        .text-gradient {
-            background: -webkit-linear-gradient(45deg, var(--primary-accent) 40%, var(--secondary-accent) 60%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #22c55e; 
+            border-radius: 4px;
         }
-
-        h1, h2, h3 {
-            font-family: var(--font-naslov);
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #16a34a; 
         }
-
-        /* Input Styles */
-        input, textarea, select {
-            background-color: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--border-color);
-            color: white;
-            transition: all 0.3s ease;
+        html {
+            scroll-behavior: smooth;
         }
-
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: var(--primary-accent);
-            box-shadow: 0 0 15px rgba(178, 56, 255, 0.2);
-            background-color: rgba(0, 0, 0, 0.8);
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
         }
-
-        input:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-        
-        /* Placeholder styling */
-        ::placeholder {
-            color: #666;
-            font-style: italic;
-            font-size: 0.9em;
-        }
-        
-        /* Date/Time picker icon color fix for dark mode */
-        ::-webkit-calendar-picker-indicator {
-            filter: invert(1);
-            cursor: pointer;
-        }
-
-        /* Custom Checkbox */
-        .custom-checkbox input:checked + div {
-            background-color: var(--primary-accent);
-            border-color: var(--primary-accent);
-        }
-        .custom-checkbox input:checked + div::after {
-            content: '';
-            position: absolute;
-            left: 5px;
-            top: 1px;
-            width: 6px;
-            height: 12px;
-            border: solid black;
-            border-width: 0 2px 2px 0;
-            transform: rotate(45deg);
-        }
-
-        /* Tabs */
-        .tab-active {
-            background-color: rgba(178, 56, 255, 0.2);
-            border-color: var(--primary-accent);
-            color: white;
-        }
-        .tab-inactive {
-            background-color: transparent;
-            border-color: transparent;
-            color: #888;
-        }
-        .tab-inactive:hover {
-            color: #ccc;
-            background-color: rgba(255, 255, 255, 0.05);
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
     </style>
 </head>
+<body>
+    <div id="root"></div>
 
-<body class="justify-between">
+    <script type="text/babel">
+        // --- ICONS (Inline SVG Components for Single File Portability) ---
+        const Icon = ({ children, className, ...props }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+                {children}
+            </svg>
+        );
 
-    <!-- Header (Minimal) -->
-    <header class="w-full py-6 z-50">
-        <div class="container mx-auto px-6 text-center">
-            <a href="#" class="text-3xl tracking-wider text-gradient font-black"
-                style="font-family: var(--font-naslov);">CELESTIX</a>
-        </div>
-    </header>
+        const Zap = (props) => <Icon {...props}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></Icon>;
+        const Check = (props) => <Icon {...props}><polyline points="20 6 9 17 4 12"></polyline></Icon>;
+        const X = (props) => <Icon {...props}><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></Icon>;
+        const Menu = (props) => <Icon {...props}><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></Icon>;
+        const Brain = (props) => <Icon {...props}><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"></path><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"></path></Icon>;
+        const Moon = (props) => <Icon {...props}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></Icon>;
+        const TrendingUp = (props) => <Icon {...props}><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></Icon>;
+        const Shield = (props) => <Icon {...props}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></Icon>;
+        const Lock = (props) => <Icon {...props}><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></Icon>;
+        const ExternalLink = (props) => <Icon {...props}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></Icon>;
+        const Star = (props) => <Icon {...props}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></Icon>;
 
-    <!-- Main Content -->
-    <main class="flex-grow flex items-center justify-center px-4 py-8 relative z-10" 
-          x-data="{ 
-              analysisType: 'single', 
-              unknownTime1: false, 
-              unknownTime2: false,
-              submitted: false,
-              placeholders: {
-                  single: `Budite detaljni. Npr: 'Radim u marketingu 5 godina, ali osećam potpunu prazninu i stres. Razmišljam o potpunoj promeni profesije u sferu psihologije. Da li moj natal to podržava? Takođe, imam osećaj da stalno privlačim partnere koji nisu emotivno dostupni. Zašto mi se to dešava?'`,
-                  synastry: `Budite detaljni. Npr: 'U vezi smo 2 godine, ali komunikacija je postala jako teška. Ja (Rak) želim više bliskosti i sigurnosti, dok on (Vodolija) traži previše slobode i distancira se kad nastane problem. Da li su naše potrebe pomirljive dugoročno ili je ovo karmička lekcija?'`
-              }
-          }">
-        
-        <!-- Background Effects -->
-        <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-purple-600/20 rounded-full blur-[100px] -z-10"></div>
-        <div class="absolute bottom-1/4 right-1/4 w-64 h-64 bg-pink-600/20 rounded-full blur-[100px] -z-10"></div>
+        // --- MAIN APPLICATION ---
+        const App = () => {
+            const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+            const [scrolled, setScrolled] = React.useState(false);
+            const [selectedProduct, setSelectedProduct] = React.useState(null);
 
-        <div class="w-full max-w-2xl">
-            
-            <!-- Hero Text -->
-            <div class="text-center mb-8">
-                <h1 class="text-3xl md:text-5xl font-bold mb-4 leading-tight">
-                    Jedno Pitanje. <br>
-                    <span class="text-gradient">Jedan Kosmički Odgovor.</span>
-                </h1>
-                <p class="text-text-secondary text-base md:text-lg max-w-lg mx-auto">
-                    Unesite podatke i budite što detaljniji u opisu svog problema. Dobićete personalizovani uvid na email.
-                </p>
-            </div>
+            React.useEffect(() => {
+                const handleScroll = () => {
+                    setScrolled(window.scrollY > 50);
+                };
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
 
-            <!-- Lead Form -->
-            <div class="glass-card p-6 md:p-10">
+            // Background Images
+            const bgHero = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop"; 
+            const bgFocus = "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1470&auto=format&fit=crop"; 
+            const bgTesto = "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=1470&auto=format&fit=crop";
+            const bgSleep = "https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?q=80&w=1555&auto=format&fit=crop";
+
+            const products = [
+                {
+                    id: "fokus",
+                    title: "PROTOKOL: FOKUS & ENERGIJA",
+                    subtitle: "Ne treba ti motivacija, treba ti ovo.",
+                    price: "7.00",
+                    originalPrice: "19.99",
+                    description: "Mnogi ljudi samo čitajući ovaj naslov osete kako bi bilo da imaju laserski fokus. To nije slučajno. Ovo je tvoj operativni sistem za produktivnost.",
+                    nlpHooks: [
+                        "Identitet: Za one koji ne prihvataju 'umoran sam'.", 
+                        "Prestani da voziš pod ručnom.", 
+                        "Zamisli da završiš sve do 14h." 
+                    ],
+                    icon: <Brain className="w-8 h-8 text-black" />,
+                    bgImage: bgFocus,
+                    buttonText: "OTKLJUČAJ ENERGIJU ⚡",
+                    accent: "green"
+                },
+                {
+                    id: "testosteron",
+                    title: "POSTANI GLAVNI U SOBI",
+                    subtitle: "Muškarac ili samo posmatrač?",
+                    price: "10.00",
+                    originalPrice: "29.99",
+                    description: "Kad uđeš u prostoriju, ljudi to osete. Ne moraš ništa da kažeš. To je biološki signal koji ovaj vodič aktivira u tebi.",
+                    nlpHooks: [
+                        "Status: Dominacija bez reči.", 
+                        "Ovo nije za dečake.", 
+                        "Prirodni autoritet koji se oseća." 
+                    ],
+                    icon: <TrendingUp className="w-8 h-8 text-black" />,
+                    bgImage: bgTesto,
+                    buttonText: "PREUZMI KONTROLU ⚡",
+                    accent: "red",
+                    bestSeller: true
+                },
+                {
+                    id: "san",
+                    title: "DUBOKI SAN: TEMELJ MOĆI",
+                    subtitle: "Spavaj kao mrtav, budi se kao zver.",
+                    price: "10.00",
+                    originalPrice: "24.99",
+                    description: "Nemoj da se iznenadiš ako se probudiš pre alarma, pun snage. Tvoje telo zna da se oporavi, samo si mu smetao. Do sad.",
+                    nlpHooks: [
+                        "Zašto si do sada bio umoran?", 
+                        "Resetuj hormone preko noći.", 
+                        "Jutro je tvoje najjače oružje." 
+                    ],
+                    icon: <Moon className="w-8 h-8 text-black" />,
+                    bgImage: bgSleep,
+                    buttonText: "OPTIMIZUJ SAN ⚡",
+                    accent: "blue" 
+                }
+            ];
+
+            return (
+                <div className="min-h-screen bg-black text-gray-200 font-sans selection:bg-green-500 selection:text-black scroll-smooth overflow-x-hidden">
                 
-                <!-- Success State -->
-                <div x-show="submitted" x-transition style="display: none;" class="text-center py-10">
-                    <i class="fas fa-check-circle text-5xl text-green-500 mb-4"></i>
-                    <h3 class="text-2xl text-white mb-2">Zahtev Uspešno Poslat!</h3>
-                    <p class="text-text-secondary">Zvezde se poravnavaju. Odgovor stiže na vaš email uskoro.</p>
-                </div>
-
-                <!-- Form Container -->
-                <div x-show="!submitted" x-transition>
-                    
-                    <!-- Tabs for Type Selection -->
-                    <div class="flex p-1 bg-black/40 rounded-xl mb-8 border border-white/10">
-                        <button 
-                            @click="analysisType = 'single'"
-                            :class="analysisType === 'single' ? 'tab-active' : 'tab-inactive'"
-                            class="flex-1 py-3 px-4 rounded-lg font-medium transition-all duration-300 border">
-                            <i class="fas fa-user mr-2"></i> Lična Analiza
-                        </button>
-                        <button 
-                            @click="analysisType = 'synastry'"
-                            :class="analysisType === 'synastry' ? 'tab-active' : 'tab-inactive'"
-                            class="flex-1 py-3 px-4 rounded-lg font-medium transition-all duration-300 border">
-                            <i class="fas fa-user-group mr-2"></i> Uporedna (Sinastrija)
-                        </button>
-                    </div>
-
-                    <form action="https://formspree.io/f/xwpgnqwo" method="POST">
+                {/* --- PAYMENT MODAL --- */}
+                {selectedProduct && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md fade-in">
+                    <div className="bg-neutral-900 border border-green-500 rounded-2xl w-full max-w-lg overflow-hidden relative shadow-[0_0_50px_rgba(34,197,94,0.3)] flex flex-col max-h-[90vh]">
                         
-                        <!-- Hidden Field for Analysis Type -->
-                        <input type="hidden" name="Tip_Analize" :value="analysisType === 'single' ? 'Lična Analiza' : 'Sinastrija'">
+                        {/* Close Button */}
+                        <button 
+                            onClick={() => setSelectedProduct(null)} 
+                            className="absolute top-4 right-4 text-gray-400 hover:text-white bg-black/50 p-2 rounded-full z-10"
+                        >
+                            <X size={20} />
+                        </button>
 
-                        <!-- PERSON 1 DATA (Always Visible) -->
-                        <div class="mb-8">
-                            <h3 class="text-lg font-bold text-white mb-4 flex items-center">
-                                <span class="bg-purple-600/20 text-purple-400 w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm border border-purple-500/30">1</span>
-                                <span x-text="analysisType === 'synastry' ? 'Tvoji Podaci' : 'Lični Podaci'"></span>
+                        {/* Modal Header */}
+                        <div className="bg-green-600 p-6 text-center flex-shrink-0">
+                            <h3 className="text-black font-black text-2xl uppercase italic tracking-tighter flex items-center justify-center gap-2">
+                                <Lock size={24} /> Sigurna Uplata
                             </h3>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-400 mb-2">Ime</label>
-                                    <input type="text" name="Osoba1_Ime" required placeholder="Vaše Ime"
-                                        class="w-full px-4 py-3 rounded-xl focus:ring-1 focus:ring-purple-500">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-400 mb-2">Mesto Rođenja</label>
-                                    <input type="text" name="Osoba1_Mesto" required placeholder="Grad, Država"
-                                        class="w-full px-4 py-3 rounded-xl focus:ring-1 focus:ring-purple-500">
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-400 mb-2">Datum Rođenja</label>
-                                    <input type="date" name="Osoba1_Datum" required
-                                        class="w-full px-4 py-3 rounded-xl focus:ring-1 focus:ring-purple-500">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-400 mb-2">Vreme Rođenja</label>
-                                    <div class="relative">
-                                        <input type="time" name="Osoba1_Vreme" 
-                                            :disabled="unknownTime1"
-                                            :required="!unknownTime1"
-                                            class="w-full px-4 py-3 rounded-xl focus:ring-1 focus:ring-purple-500 disabled:opacity-50">
-                                    </div>
-                                    <!-- Checkbox for Unknown Time -->
-                                    <label class="flex items-center mt-2 cursor-pointer custom-checkbox">
-                                        <input type="checkbox" name="Osoba1_Vreme_Nepoznato" x-model="unknownTime1" class="hidden">
-                                        <div class="w-5 h-5 border border-gray-500 rounded relative mr-2 transition-colors"></div>
-                                        <span class="text-xs text-gray-400">Ne znam tačno vreme</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- PERSON 2 DATA (Visible only for Synastry) -->
-                        <div x-show="analysisType === 'synastry'" x-transition class="mb-8 pt-6 border-t border-white/10">
-                            <h3 class="text-lg font-bold text-white mb-4 flex items-center">
-                                <span class="bg-pink-600/20 text-pink-400 w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm border border-pink-500/30">2</span>
-                                Podaci Partnera
-                            </h3>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-400 mb-2">Ime Partnera</label>
-                                    <input type="text" name="Osoba2_Ime" placeholder="Ime Partnera"
-                                        :required="analysisType === 'synastry'"
-                                        class="w-full px-4 py-3 rounded-xl focus:ring-1 focus:ring-purple-500">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-400 mb-2">Mesto Rođenja</label>
-                                    <input type="text" name="Osoba2_Mesto" placeholder="Grad, Država"
-                                        :required="analysisType === 'synastry'"
-                                        class="w-full px-4 py-3 rounded-xl focus:ring-1 focus:ring-purple-500">
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-400 mb-2">Datum Rođenja</label>
-                                    <input type="date" name="Osoba2_Datum" 
-                                        :required="analysisType === 'synastry'"
-                                        class="w-full px-4 py-3 rounded-xl focus:ring-1 focus:ring-purple-500">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-400 mb-2">Vreme Rođenja</label>
-                                    <div class="relative">
-                                        <input type="time" name="Osoba2_Vreme" 
-                                            :disabled="unknownTime2"
-                                            :required="analysisType === 'synastry' && !unknownTime2"
-                                            class="w-full px-4 py-3 rounded-xl focus:ring-1 focus:ring-purple-500 disabled:opacity-50">
-                                    </div>
-                                    <!-- Checkbox for Unknown Time -->
-                                    <label class="flex items-center mt-2 cursor-pointer custom-checkbox">
-                                        <input type="checkbox" name="Osoba2_Vreme_Nepoznato" x-model="unknownTime2" class="hidden">
-                                        <div class="w-5 h-5 border border-gray-500 rounded relative mr-2 transition-colors"></div>
-                                        <span class="text-xs text-gray-400">Ne znam tačno vreme</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- COMMON FIELDS (Email & Question) -->
-                        <div class="pt-6 border-t border-white/10">
-                            <div class="mb-6">
-                                <label for="email" class="block text-sm font-medium text-gray-400 mb-2">Vaša Email Adresa</label>
-                                <input type="email" name="Email_Korisnika" id="email" required placeholder="Gde šaljemo odgovor?"
-                                    class="w-full px-4 py-3 rounded-xl focus:ring-1 focus:ring-purple-500">
-                            </div>
-
-                            <div class="mb-8">
-                                <label for="question" class="block text-sm font-medium text-primary-accent mb-2 font-bold flex justify-between">
-                                    <span><i class="fas fa-star mr-1"></i> Vaše Pitanje / Situacija</span>
-                                    <span class="text-xs font-normal text-gray-500 pt-1" x-text="analysisType === 'single' ? 'Budite detaljni o sebi' : 'Budite detaljni o odnosu'"></span>
-                                </label>
-                                
-                                <!-- DYNAMIC TEXTAREA PLACEHOLDER -->
-                                <textarea name="Pitanje" id="question" rows="6" required 
-                                    :placeholder="analysisType === 'single' ? placeholders.single : placeholders.synastry"
-                                    class="w-full px-4 py-3 rounded-xl focus:ring-1 focus:ring-purple-500 resize-none text-sm leading-relaxed"></textarea>
-                                
-                                <p class="text-xs text-gray-500 mt-2 text-right">Što više detalja napišete, analiza će biti preciznija.</p>
-                            </div>
-
-                            <!-- Submit Button -->
-                            <button type="submit" class="w-full py-4 btn-gradient rounded-full text-lg shadow-lg group relative overflow-hidden">
-                                <span class="relative z-10 flex items-center justify-center">
-                                    Pošalji Pitanje <i class="fas fa-paper-plane ml-2 group-hover:translate-x-1 transition-transform"></i>
-                                </span>
-                            </button>
-                            
-                            <p class="text-xs text-center text-gray-600 mt-4">
-                                <i class="fas fa-lock mr-1"></i> Vaši podaci se koriste isključivo za izradu analize.
+                            <p className="text-black/80 font-bold text-sm mt-1">
+                                Preuzimaš: <span className="underline">{selectedProduct.title}</span>
                             </p>
                         </div>
 
-                    </form>
+                        {/* Modal Content (Scrollable) */}
+                        <div className="p-6 overflow-y-auto custom-scrollbar">
+                            
+                            {/* Step 1: Western Union */}
+                            <div className="mb-8 relative group">
+                                <div className="absolute -left-3 top-0 bottom-0 w-1 bg-gradient-to-b from-green-500 to-transparent"></div>
+                                <h4 className="text-green-400 font-bold uppercase tracking-widest text-sm mb-3 flex items-center gap-2">
+                                <span className="bg-green-500 text-black w-6 h-6 rounded-full flex items-center justify-center text-xs font-black">1</span>
+                                Pošalji Novac (Western Union)
+                                </h4>
+                                
+                                <div className="bg-black/40 border border-white/10 p-4 rounded-xl space-y-3">
+                                    <p className="text-gray-300 text-xs leading-relaxed">
+                                    Klikni na dugme ispod, registruj se za manje od minut (ako nemaš nalog) i pošalji tačan iznos.
+                                    </p>
+                                    
+                                    <div className="bg-white/5 p-3 rounded border border-white/5 text-sm font-mono text-gray-200">
+                                    <div className="flex justify-between border-b border-white/10 pb-1 mb-1">
+                                        <span className="text-gray-500">Primalac:</span>
+                                        <span className="font-bold text-white">Nikola Spiridonovic</span>
+                                    </div>
+                                    <div className="flex justify-between border-b border-white/10 pb-1 mb-1">
+                                        <span className="text-gray-500">Grad/Država:</span>
+                                        <span className="font-bold text-white">Beograd, Srbija</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-gray-500">Iznos:</span>
+                                        <span className="font-bold text-green-400">€{selectedProduct.price}</span>
+                                    </div>
+                                    </div>
+
+                                    <a href="https://www.westernunion.com" target="_blank" rel="noreferrer" className="w-full py-3 bg-[#FFDA00] hover:bg-[#E6C400] text-black font-black uppercase text-sm rounded flex items-center justify-center gap-2 transition-transform active:scale-95">
+                                    Otvori Western Union <ExternalLink size={14} />
+                                    </a>
+                                </div>
+                            </div>
+
+                            {/* Step 2: Formspree */}
+                            <div className="relative">
+                                <div className="absolute -left-3 top-0 bottom-0 w-1 bg-gradient-to-t from-green-500 to-transparent"></div>
+                                <h4 className="text-green-400 font-bold uppercase tracking-widest text-sm mb-3 flex items-center gap-2">
+                                <span className="bg-green-500 text-black w-6 h-6 rounded-full flex items-center justify-center text-xs font-black">2</span>
+                                Potvrdi Uplatu
+                                </h4>
+
+                                <form action="https://formspree.io/f/xrbybapo" method="POST" className="space-y-4">
+                                {/* Hidden Identifiers */}
+                                <input type="hidden" name="proizvod" value={selectedProduct.title} />
+                                
+                                {/* Email Field */}
+                                <div>
+                                    <input 
+                                        type="email" 
+                                        name="email" 
+                                        required 
+                                        placeholder="Tvoj Email (gde šaljemo protokol)" 
+                                        className="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-white placeholder-gray-500 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none transition-all text-sm"
+                                    />
+                                </div>
+
+                                {/* Name Field */}
+                                <div>
+                                    <input 
+                                        type="text" 
+                                        name="ime_prezime" 
+                                        required 
+                                        placeholder="Ime i Prezime" 
+                                        className="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-white placeholder-gray-500 focus:border-green-500 outline-none transition-all text-sm"
+                                    />
+                                </div>
+
+                                {/* MTCN and Amount Grid */}
+                                <div className="grid grid-cols-2 gap-3">
+                                    <input 
+                                        type="text" 
+                                        name="mtcn_kod" 
+                                        required 
+                                        placeholder="WU MTCN (Kod sa uplatnice)"
+                                        className="w-full bg-neutral-800 border border-green-500/50 rounded-lg p-3 text-green-400 placeholder-gray-500 focus:border-green-400 outline-none transition-all text-sm font-bold"
+                                    />
+                                    <input 
+                                        type="text" 
+                                        name="iznos" 
+                                        required 
+                                        placeholder="Tačan iznos (€)"
+                                        defaultValue={selectedProduct.price}
+                                        className="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-white placeholder-gray-500 focus:border-green-500 outline-none transition-all text-sm font-mono text-center"
+                                    />
+                                </div>
+
+                                <button type="submit" className="w-full py-4 bg-green-500 hover:bg-green-400 text-black font-black uppercase tracking-widest rounded-lg shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] flex items-center justify-center gap-2 transition-all mt-4 transform hover:-translate-y-1">
+                                    POTVRDI I PREUZMI <Check size={20} strokeWidth={3} />
+                                </button>
+
+                                <div className="bg-blue-500/10 border border-blue-500/20 p-3 rounded text-center">
+                                    <p className="text-[10px] text-blue-200 uppercase tracking-wide font-bold">
+                                        Važno: Protokol ti stiže na email u narednih 24h nakon provere koda.
+                                    </p>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                )}
+
+                {/* --- NAVIGATION (Sticky & Blur) --- */}
+                <nav className={`fixed top-0 w-full z-40 transition-all duration-300 ${scrolled ? 'bg-black/90 backdrop-blur-md border-b border-white/10 py-2' : 'bg-transparent py-4'}`}>
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex justify-between items-center">
+                        
+                        {/* Logo sa Munjom */}
+                        <div className="flex items-center gap-2 group cursor-pointer">
+                        <div className="relative">
+                            <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center shadow-[0_0_20px_rgba(34,197,94,0.6)] animate-[pulse_3s_infinite]">
+                            <Zap className="w-6 h-6 text-black fill-black" />
+                            </div>
+                        </div>
+                        <span className="text-2xl font-black tracking-tighter text-white font-mono italic">
+                            VITRUVIX
+                        </span>
+                        </div>
+
+                        {/* Desktop Links */}
+                        <div className="hidden md:flex items-center space-x-8">
+                        <a href="#testosteron" className="text-sm font-bold text-gray-300 hover:text-green-400 transition-colors uppercase tracking-widest">Dominacija</a>
+                        <a href="#fokus" className="text-sm font-bold text-gray-300 hover:text-green-400 transition-colors uppercase tracking-widest">Fokus</a>
+                        <button className="bg-white hover:bg-green-500 hover:text-black text-black px-6 py-2 rounded-sm font-black uppercase tracking-wide transition-all border border-transparent hover:shadow-[0_0_20px_rgba(34,197,94,0.5)]">
+                            Pristup
+                        </button>
+                        </div>
+
+                        {/* Mobile Menu Toggle */}
+                        <div className="md:hidden">
+                        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-white">
+                            {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+                        </button>
+                        </div>
+                    </div>
+                    </div>
+
+                    {/* Mobile Dropdown */}
+                    {isMenuOpen && (
+                    <div className="md:hidden bg-black/95 backdrop-blur-xl border-t border-gray-800 absolute w-full h-screen z-50">
+                        <div className="px-4 pt-8 space-y-8 text-center">
+                        <a onClick={() => setIsMenuOpen(false)} href="#testosteron" className="block text-3xl font-black text-white hover:text-green-500 uppercase tracking-tighter">DOMINACIJA ⚡</a>
+                        <a onClick={() => setIsMenuOpen(false)} href="#fokus" className="block text-3xl font-black text-white hover:text-green-500 uppercase tracking-tighter">FOKUS ⚡</a>
+                        <a onClick={() => setIsMenuOpen(false)} href="#san" className="block text-3xl font-black text-white hover:text-green-500 uppercase tracking-tighter">SAN ⚡</a>
+                        </div>
+                    </div>
+                    )}
+                </nav>
+
+                {/* --- HERO SECTION (Identity Shift + Pattern Interrupt) --- */}
+                <section className="relative h-screen flex items-center justify-center overflow-hidden">
+                    {/* Background */}
+                    <div className="absolute inset-0 z-0">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/40 z-10"></div>
+                        <div className="absolute inset-0 bg-green-500/10 mix-blend-overlay z-10"></div>
+                        <img src={bgHero} alt="Hero" className="w-full h-full object-cover opacity-60" />
+                    </div>
+                    
+                    <div className="max-w-4xl mx-auto px-4 text-center relative z-20 mt-10">
+                    
+                    {/* Pattern Interrupt Badge */}
+                    <div className="inline-block animate-bounce mb-6">
+                        <div className="bg-red-600 text-white px-4 py-1 font-black uppercase tracking-widest text-xs rounded-sm shadow-[0_0_20px_rgba(220,38,38,0.5)]">
+                            Nije za svakoga
+                        </div>
+                    </div>
+                    
+                    {/* Main Headline (Presupposition) */}
+                    <h1 className="text-5xl md:text-8xl font-black mb-6 leading-none text-white tracking-tighter drop-shadow-2xl">
+                        TI VEĆ ZNAŠ DA<br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-green-200 to-green-500 relative">
+                        MOŽEŠ VIŠE.
+                        <span className="absolute -top-6 -right-8 w-16 h-16 text-green-500 fill-green-500 hidden md:block opacity-80"><Zap size={64} fill="currentColor" /></span>
+                        </span>
+                    </h1>
+                    
+                    {/* Subhead (Truism + Double Bind) */}
+                    <p className="text-lg md:text-2xl text-gray-300 mb-10 max-w-2xl mx-auto font-light leading-relaxed">
+                        Dok ovo čitaš, tvoja konkurencija ili spava, ili koristi ove protokole. <br />
+                        <span className="text-white font-bold">Pitanje je samo – u kojoj si ti grupi?</span>
+                    </p>
+                    
+                    {/* CTA (Embedded Command) */}
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                        <a href="#proizvodi" className="w-full sm:w-auto px-12 py-5 bg-green-600 hover:bg-green-500 text-black font-black text-xl rounded-sm uppercase tracking-wider shadow-[0_0_40px_rgba(34,197,94,0.3)] hover:shadow-[0_0_60px_rgba(34,197,94,0.6)] transition-all transform hover:-translate-y-1">
+                        POKRENI DOMINACIJU ⚡
+                        </a>
+                    </div>
+
+                    {/* Social Proof (Indirect) */}
+                    <div className="mt-12 text-gray-500 text-xs uppercase tracking-[0.2em]">
+                        Pridruži se onima koji ne prihvataju prosek
+                    </div>
+                    </div>
+                </section>
+
+                {/* --- PRODUCTS (The "Arsenal") --- */}
+                <section id="proizvodi" className="py-24 relative bg-black">
+                    <div className="max-w-6xl mx-auto px-4">
+                    
+                    {/* Section Header (Authority without boasting) */}
+                    <div className="text-center mb-20">
+                        <h2 className="text-4xl md:text-6xl font-black text-white mb-6 uppercase tracking-tighter italic">
+                        Arsenal <span className="text-green-500">1%</span>
+                        </h2>
+                        <p className="text-gray-400 max-w-xl mx-auto text-lg">
+                        Ovo nisu kursevi. Ovo su prečice koje štede godine pokušavanja.
+                        </p>
+                    </div>
+
+                    <div className="space-y-32">
+                        {products.map((product, index) => (
+                        <div key={product.id} id={product.id} className={`flex flex-col md:flex-row items-center gap-12 group ${index % 2 === 1 ? 'md:flex-row-reverse' : ''}`}>
+                            
+                            {/* Visual Side */}
+                            <div className="w-full md:w-1/2 relative">
+                                <div className="absolute inset-0 bg-gradient-to-tr from-green-500/20 to-transparent blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                                <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl group-hover:border-green-500/50 transition-all duration-500 group-hover:shadow-[0_0_40px_rgba(34,197,94,0.15)] aspect-[4/3]">
+                                    <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-all duration-500 z-10"></div>
+                                    <img src={product.bgImage} alt={product.title} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" />
+                                    
+                                    {/* Overlay Text inside Image */}
+                                    <div className="absolute bottom-0 left-0 p-6 z-20 w-full bg-gradient-to-t from-black via-black/80 to-transparent">
+                                        {product.bestSeller && (
+                                            <div className="inline-flex items-center gap-1 bg-yellow-500 text-black text-xs font-black px-2 py-1 uppercase tracking-wider mb-2">
+                                                <Star size={12} fill="black" /> Best Seller
+                                            </div>
+                                        )}
+                                        <h3 className="text-3xl font-black text-white uppercase italic leading-none">{product.title}</h3>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Copy Side (NLP Heavy) */}
+                            <div className="w-full md:w-1/2 text-left">
+                                <div className={`inline-flex items-center justify-center w-12 h-12 rounded-lg mb-6 ${product.accent === 'red' ? 'bg-red-600' : 'bg-green-500'} text-black shadow-lg`}>
+                                    {product.icon}
+                                </div>
+                                
+                                <h4 className="text-green-400 font-bold uppercase tracking-widest text-sm mb-4 flex items-center gap-2">
+                                    <Zap size={14} /> {product.subtitle}
+                                </h4>
+                                
+                                <p className="text-xl text-gray-200 mb-8 font-light leading-relaxed border-l-4 border-gray-700 pl-4">
+                                    {product.description}
+                                </p>
+
+                                {/* NLP Bullets (Embedded Commands & Truisms) */}
+                                <div className="space-y-4 mb-8">
+                                    {product.nlpHooks.map((hook, i) => (
+                                        <div key={i} className="flex items-center gap-4 group/item">
+                                            <div className={`w-1 h-1 rounded-full ${product.accent === 'red' ? 'bg-red-500' : 'bg-green-500'} group-hover/item:w-8 transition-all duration-300`}></div>
+                                            <span className="text-gray-400 group-hover/item:text-white transition-colors text-sm uppercase font-bold tracking-wide">{hook}</span>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Price Anchor & CTA */}
+                                <div className="flex items-center gap-6 mt-8">
+                                    <div>
+                                        <div className="text-gray-500 line-through text-sm">€{product.originalPrice}</div>
+                                        <div className="text-4xl font-black text-white italic">€{product.price}</div>
+                                    </div>
+                                    <button 
+                                        onClick={() => setSelectedProduct(product)}
+                                        className={`flex-1 py-4 px-6 ${product.accent === 'red' ? 'bg-white hover:bg-red-600' : 'bg-white hover:bg-green-500'} hover:text-white text-black font-black uppercase tracking-wider rounded-sm transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_40px_rgba(34,197,94,0.4)] flex items-center justify-center gap-2`}
+                                    >
+                                        {product.buttonText}
+                                    </button>
+                                </div>
+                                
+                                {/* Micro-commitment / Permission to believe */}
+                                <p className="mt-4 text-xs text-gray-500 italic">
+                                    *Klikom potvrđuješ da si spreman za promenu.
+                                </p>
+                            </div>
+
+                        </div>
+                        ))}
+                    </div>
+                    </div>
+                </section>
+
+                {/* --- MANIFESTO (Identity Shift) --- */}
+                <section className="py-20 bg-neutral-900 border-t border-b border-white/5 relative overflow-hidden">
+                    {/* Abstract Background Elements */}
+                    <div className="absolute top-0 right-0 w-1/2 h-full bg-green-500/5 skew-x-12"></div>
+                    <div className="absolute bottom-0 left-0 w-1/3 h-full bg-green-500/5 -skew-x-12"></div>
+
+                    <div className="max-w-3xl mx-auto px-4 text-center relative z-10">
+                    <Shield className="w-16 h-16 text-gray-600 mx-auto mb-8 opacity-50" />
+                    
+                    <h2 className="text-3xl font-black text-white mb-8 uppercase tracking-widest">
+                        Zašto baš <span className="text-green-500">ti</span>?
+                    </h2>
+                    
+                    <div className="space-y-6 text-lg text-gray-400 leading-relaxed font-serif italic">
+                        <p>
+                        "Većina ljudi će zatvoriti ovu stranicu i vratiti se na TikTok da gledaju gluposti. <strong className="text-white not-italic">To je okej.</strong> Ovo nije za njih."
+                        </p>
+                        <p>
+                        "Ali činjenica da si i dalje ovde... da čitaš ovo... znači da tvoja podsvest već zna da ti treba promena. <strong className="text-white not-italic">Nešto u tebi je već donelo odluku.</strong>"
+                        </p>
+                        <p className="text-white">
+                        Samo treba da je potvrdiš.
+                        </p>
+                    </div>
+                    </div>
+                </section>
+
+                {/* --- FAQ (Lost Permission & Double Bind) --- */}
+                <section className="py-20 bg-black">
+                    <div className="max-w-4xl mx-auto px-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="bg-white/5 p-8 rounded-xl border-l-2 border-green-500">
+                                <h3 className="text-white font-bold uppercase mb-2">Hoće li ovo raditi za mene?</h3>
+                                <p className="text-gray-400 text-sm">Ne znam. Ako ne primeniš, neće. Ali ako pratiš korake, nemoguće je da ne vidiš rezultat. <span className="text-white">To je biologija, ne magija.</span></p>
+                            </div>
+                            <div className="bg-white/5 p-8 rounded-xl border-l-2 border-green-500">
+                                <h3 className="text-white font-bold uppercase mb-2">Zašto je cena ovako niska?</h3>
+                                <p className="text-gray-400 text-sm">Mogao sam da stavim 50€. Ali cilj nije zarada na tebi, nego stvaranje vojske od 1%. <span className="text-white">Želim da ti ovo bude najlakša odluka danas.</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* --- FOOTER (Subtle CTA) --- */}
+                <footer className="bg-black py-12 border-t border-white/10 relative">
+                    <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-black font-black">V</div>
+                        <span className="text-xl font-black tracking-tighter text-white">VITRUVIX</span>
+                    </div>
+                    
+                    <div className="text-gray-500 text-sm">
+                        Ne čekaj ponedeljak. <a href="#proizvodi" className="text-green-500 hover:underline">Kreni sad.</a>
+                    </div>
+                    </div>
+                    
+                    {/* Decoration */}
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-1 bg-gradient-to-r from-transparent via-green-500 to-transparent opacity-50"></div>
+                </footer>
                 </div>
-            </div>
-        </div>
-    </main>
+            );
+        };
 
-    <!-- Footer -->
-    <footer class="py-6 border-t border-white/5 mt-auto z-10 bg-black/50 backdrop-blur-sm">
-        <div class="container mx-auto px-6 text-center text-xs text-gray-500">
-            <p>&copy; 2025 Celestix. Sva prava zadržana.</p>
-        </div>
-    </footer>
-
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
 </body>
 </html>
